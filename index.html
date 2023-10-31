@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student App</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <div class="container mt-5">
+      <div class="row">
+        <div class="col">
+          <button
+            type="button"
+            class="btn btn-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#studentModal"
+          >
+            Dodaj studenta
+          </button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <table class="table table-striped" id="students">
+            <thead>
+              <tr>
+                <th scope="col">Ime</th>
+                <th scope="col">Prezime</th>
+                <th scope="col">OIB</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div
+      class="modal fade"
+      id="studentModal"
+      tabindex="-1"
+      aria-labelledby="studentModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="studentModalLabel">
+              Dodaj novog studenta
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <form method="post" id="createStudentForm">
+            <input type="hidden" name="currentOib" id="currentOib" value="" />
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="ime" class="form-label">Ime:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="ime"
+                  id="ime"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="prezime" class="form-label">Prezime:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="prezime"
+                  id="prezime"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="oib" class="form-label">OIB:</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  name="oib"
+                  id="oib"
+                  required
+                />
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Odustani
+              </button>
+              <button type="submit" class="btn btn-primary">Dodaj</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Javascript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
