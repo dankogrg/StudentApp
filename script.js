@@ -13,21 +13,27 @@ loadStudentsFromLocalStorage();
 
 // Dodavanje funckije kao listener za event submit
 createStudentForm.addEventListener("submit", handleCreateStudent);
-studentModal.addEventListener("shown.bs.modal", function (e) {
+studentModal.addEventListener("shown.bs.modal", function () {
   createStudentForm[1].focus();
 });
-console.log(createStudentForm);
+studentModal.addEventListener("hidden.bs.modal", function () {
+  createStudentForm.reset();
+  createStudentForm.querySelector("input#currentOib").value = "";
+});
 
 // Funkcija koja će se aktivirati kada se dogodi event submit nad objektom obrasca
 function handleCreateStudent(e) {
   e.preventDefault();
 
   let formData = new FormData(e.target);
-
   let student = {};
-
-  for (const iterator of formData) {
+  for (const iterator of formData.entries()) {
     student[iterator[0]] = iterator[1];
+  }
+
+  if (student.currentOib) {
+    updateStudent(student);
+    return;
   }
 
   createStudent(student);
@@ -37,7 +43,28 @@ function createStudent(student) {
   addStudentToTable(student);
   addStudentToStorage(student);
   studentModalObj.hide();
-  createStudentForm.reset();
+}
+
+function updateStudent(student) {
+  const records = localStorage.getItem(localStorageKey);
+  if (records) {
+    let students = JSON.parse(records);
+    students = students.map(function (value) {
+      if (student.currentOib == value.oib) {
+        {
+          value.ime = student.ime;
+          value.prezime = student.prezime;
+          value.oib = student.oib;
+        };
+      }
+
+      return value;
+    });
+
+    localStorage.setItem(localStorageKey, JSON.stringify(students));
+    loadStudentsFromLocalStorage();
+    studentModalObj.hide();
+  }
 }
 
 // Dodaj studenta u tablicu koja se nalazi u DOM-u
@@ -72,7 +99,7 @@ function addStudentToTable(student) {
   td.prepend(editBtn);
 
   tr.append(td);
-  studentTableBody.prepend(tr);
+  studentTableBody.append(tr);
 }
 
 // Izbriši studenta kada korisnik klikne na gumb Izbriši
@@ -94,14 +121,32 @@ function handleEditStudent(e) {
   e.preventDefault();
 
   const oib = e.target.dataset.oib;
+  const records = localStorage.getItem(localStorageKey);
 
-  studentModalObj.show();
+  if (records) {
+    const students = JSON.parse(records);
+    const student = students.find(function (student) {
+      return student.oib == oib;
+    });
+
+    if (student) {
+      createStudentForm.querySelector("input#currentOib").value = student.oib;
+      createStudentForm.querySelector("input#ime").value = student.ime;
+      createStudentForm.querySelector("input#prezime").value = student.prezime;
+      createStudentForm.querySelector("input#oib").value = student.oib;
+    }
+
+    studentModalObj.show();
+
+    return;
+  }
+
+  console.warn("Problem with users!");
 }
 
 // dodaj studenta u lokalnu pohranu
 function addStudentToStorage(student) {
   const records = localStorage.getItem(localStorageKey);
-
   let students = [];
 
   if (records) {
@@ -119,9 +164,9 @@ function deleteStudentFromLocalStorage(oib) {
 
   if (records) {
     const students = JSON.parse(records);
-    console.log(students);
-    const newStudents = students.filter(function (ss) {
-      return ss.oib != oib;
+
+    const newStudents = students.filter(function (student) {
+      return student.oib != oib;
     });
 
     localStorage.setItem(localStorageKey, JSON.stringify(newStudents));
@@ -136,8 +181,8 @@ function loadStudentsFromLocalStorage() {
 
   if (records) {
     const students = JSON.parse(records);
-    students.forEach(function (sss) {
-      addStudentToTable(sss);
+    students.forEach(function (student) {
+      addStudentToTable(student);
     });
   }
 }
